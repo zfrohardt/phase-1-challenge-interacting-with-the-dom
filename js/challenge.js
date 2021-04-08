@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
     buttons.plus.addEventListener("click", plusButtonHandler);
     buttons.minus.addEventListener("click", minusButtonHandler);
     buttons.heart.addEventListener("click", heartButtonHandler);
-    comment.submit.addEventListener("click", commentHandler);
+    comment.submitButton.addEventListener("click", commentHandler);
 });
 
 function init() {
@@ -24,15 +24,8 @@ function init() {
     }
     comment = {
         list: document.getElementById("list"),
-        submit: document.getElementById("submit"),
-        newContent: document.getElementById("comment-input"),
-    }
-}
-
-let counterIncrement = event => {
-    if (running) {
-        updateCounter();
-        setTimer();
+        submitButton: document.getElementById("submit"),
+        submission: document.getElementById("comment-input"),
     }
 }
 
@@ -41,7 +34,12 @@ let updateCounter = (n = ++count) => {
     counter.innerHTML = count;
 }
 
-let setTimer = () => setTimeout(counterIncrement, 1000); // refactor with setInterval()?
+let setTimer = () => setTimeout(e => {
+    if (running) {
+        updateCounter();
+        setTimer();
+    }
+}, 1000); // refactor with setInterval()?
 
 let pauseButtonHandler = event => {
     running = !running;
@@ -63,8 +61,6 @@ let minusButtonHandler = event => {
 
 let heartButtonHandler = event => {
     let like = likes.querySelector(`[num="${count}"]`)
-    console.log(count)
-    console.log(like);
     if (!like) {
         like = document.createElement("li");
         like.setAttribute("num", count);
@@ -77,10 +73,10 @@ let heartButtonHandler = event => {
 
 let commentHandler = event => {
     event.preventDefault();
-    if (comment.newContent.value !== "") {
+    if (comment.submission.value !== "") {
         let newComment = document.createElement("p");
-        newComment.innerHTML = comment.newContent.value;
-        comment.newContent.value = "";
+        newComment.innerHTML = comment.submission.value;
+        comment.submission.value = "";
         comment.list.appendChild(newComment);
     }
 }
